@@ -5,7 +5,7 @@ var kSpeed = 3.0;
 var minDistFactor = 2.5;
 var nParticles = 2000;
 var catSpeed = 2;
-var nFrames = 9;
+var nFrames = 8;
 
 var imageWidth = 200;
 var imageHeight = 150;
@@ -37,8 +37,8 @@ for (var i = 0; i < nFrames; ++i) {
 }
 
 // load all cats
-window.setTimeout(start, 1000);
-// window.onload = start;
+window.setTimeout(start, 3000);
+//
 
 function start() {
   cats.forEach(function (cat, i) {
@@ -66,7 +66,7 @@ function update() {
     }).attr('cy', function (d) {
       return d.y;
     }).style('fill', function (d) {
-      return d3.hsl(d3.scale.linear().domain([minRadius, maxRadius]).range([0, 360])(d.rad), 0.8, 0.3);
+      return d3.hsl(d3.scale.linear().domain([minRadius, maxRadius]).range([0, 360])(d.rad), 0.8, d3.scale.linear().domain([minRadius, maxRadius]).range([0, 1])(d.rad));
     });
   });
 }

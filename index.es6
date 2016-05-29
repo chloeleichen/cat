@@ -3,7 +3,7 @@ const kSpeed = 3.0;
 const minDistFactor = 2.5;
 const nParticles = 2000;
 const catSpeed = 2;
-const nFrames = 9;
+const nFrames = 8;
 
 const imageWidth = 200;
 const imageHeight = 150;
@@ -41,8 +41,8 @@ for (let i = 0; i < nFrames; ++i) {
 }
 
 // load all cats
-window.setTimeout(start, 1000);
-// window.onload = start;
+window.setTimeout(start, 3000);
+//
 
 function start() {
   cats.forEach((cat, i)=>{
@@ -71,7 +71,7 @@ function update() {
     .data(particles)
     .attr('cx', d => d.x)
     .attr('cy', d => d.y)
-    .style('fill', d=>d3.hsl(d3.scale.linear().domain([minRadius, maxRadius]).range([0, 360])(d.rad), 0.8, 0.3))
+    .style('fill', d=>d3.hsl(d3.scale.linear().domain([minRadius, maxRadius]).range([0, 360])(d.rad), 0.8, d3.scale.linear().domain([minRadius, maxRadius]).range([0, 1])(d.rad)))
   });
 }
 
