@@ -2,8 +2,8 @@ const damping = 0.7;
 const kSpeed = 3.0;
 const minDistFactor = 2.5;
 const nParticles = 2000;
-const catSpeed = 2;
-const nFrames = 8;
+const catSpeed = 3;
+const nFrames = 6;
 
 const imageWidth = 200;
 const imageHeight = 150;
@@ -33,16 +33,29 @@ let svg = d3.select('#container')
             .append('g');
 
 let context = canvas.node().getContext('2d');
+const imageSrc = d3.range(0, nFrames).map(i=>`images/cats${i}.jpg`);
 
-for (let i = 0; i < nFrames; ++i) {
-  let image = new Image();
-  image.src = `images/cats${i}.jpg`;
-  cats.push(image);
+function getImage(url) {
+  return new Promise((resolve, reject)=>{
+    let image = new Image();
+    image.src = url;
+    cats.push(image);
+    image.onload = ()=>{
+      resolve(url);
+    };
+    image.onerror = ()=>{
+      reject(url);
+    };
+  });
 }
 
-// load all cats
-window.setTimeout(start, 3000);
-//
+let getImagePromises = imageSrc.map(url=> getImage(url));
+
+Promise.all(getImagePromises).then(()=>{
+  start();
+}).catch((error)=>{
+  console.log(error);
+});
 
 function start() {
   cats.forEach((cat, i)=>{
@@ -61,6 +74,7 @@ function start() {
      .attr('cx', d => d.x)
      .attr('cy', d => d.y)
      .attr('r', medRadius / 2);
+  reference = cats[0];
   update();
 }
 
@@ -69,7 +83,6 @@ function update() {
     doPhysics(t);
     svg.selectAll('circle')
     .data(particles)
-    .transition()
     .attr('cx', d => d.x)
     .attr('cy', d => d.y)
     .style('fill', d=>d3.hsl(d3.scale.linear().domain([minRadius, maxRadius]).range([0, 360])(d.rad), 0.8, d3.scale.linear().domain([minRadius, maxRadius]).range([0, 1])(d.rad)))

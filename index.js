@@ -4,8 +4,8 @@ var damping = 0.7;
 var kSpeed = 3.0;
 var minDistFactor = 2.5;
 var nParticles = 2000;
-var catSpeed = 2;
-var nFrames = 8;
+var catSpeed = 3;
+var nFrames = 6;
 
 var imageWidth = 200;
 var imageHeight = 150;
@@ -29,16 +29,33 @@ var canvas = d3.select('body').append('canvas').attr('width', imageWidth).attr('
 var svg = d3.select('#container').append('svg').attr('width', width).attr('height', height).append('g');
 
 var context = canvas.node().getContext('2d');
+var imageSrc = d3.range(0, nFrames).map(function (i) {
+  return 'images/cats' + i + '.jpg';
+});
 
-for (var i = 0; i < nFrames; ++i) {
-  var image = new Image();
-  image.src = 'images/cats' + i + '.jpg';
-  cats.push(image);
+function getImage(url) {
+  return new Promise(function (resolve, reject) {
+    var image = new Image();
+    image.src = url;
+    cats.push(image);
+    image.onload = function () {
+      resolve(url);
+    };
+    image.onerror = function () {
+      reject(url);
+    };
+  });
 }
 
-// load all cats
-window.setTimeout(start, 3000);
-//
+var getImagePromises = imageSrc.map(function (url) {
+  return getImage(url);
+});
+
+Promise.all(getImagePromises).then(function () {
+  start();
+}).catch(function (error) {
+  console.log(error);
+});
 
 function start() {
   cats.forEach(function (cat, i) {
@@ -46,7 +63,7 @@ function start() {
     cats[i] = context.getImageData(0, 0, imageWidth, imageHeight);
     cats[i].id = i;
   });
-  for (var _i = 0; _i < nParticles; ++_i) {
+  for (var i = 0; i < nParticles; ++i) {
     var particle = new Particle(Math.random() * width, Math.random() * height);
     particles.push(particle);
   }
@@ -55,13 +72,14 @@ function start() {
   }).attr('cy', function (d) {
     return d.y;
   }).attr('r', medRadius / 2);
+  reference = cats[0];
   update();
 }
 
 function update() {
   d3.timer(function (t) {
     doPhysics(t);
-    svg.selectAll('circle').data(particles).transition().attr('cx', function (d) {
+    svg.selectAll('circle').data(particles).attr('cx', function (d) {
       return d.x;
     }).attr('cy', function (d) {
       return d.y;
@@ -76,28 +94,28 @@ function doPhysics(t) {
   if (frameCount % catSpeed === 0) {
     reference = cats[frameCount / catSpeed % nFrames];
   }
-  for (var _i2 = 0; _i2 < nParticles; ++_i2) {
-    var px = parseInt(particles[_i2].x / imageScale, 10);
-    var py = parseInt(particles[_i2].y / imageScale, 10);
+  for (var i = 0; i < nParticles; ++i) {
+    var px = parseInt(particles[i].x / imageScale, 10);
+    var py = parseInt(particles[i].y / imageScale, 10);
     if (px >= 0 && px < reference.width && py >= 0 && py < reference.height) {
       // get red color
       var v = reference.data[(imageWidth * py + px) * 4];
-      particles[_i2].rad = d3.scale.linear().domain([0, 1]).range([minRadius, maxRadius])(v / 255);
+      particles[i].rad = d3.scale.linear().domain([0, 1]).range([minRadius, maxRadius])(v / 255);
     }
   }
-  for (var _i3 = 0; _i3 < nParticles; ++_i3) {
-    var p = particles[_i3];
+  for (var _i = 0; _i < nParticles; ++_i) {
+    var p = particles[_i];
     p.fx = p.fy = p.wt = 0;
     p.vx *= damping;
     p.vy *= damping;
   }
 
   // Particle -> particle interactions
-  for (var _i4 = 0; _i4 < nParticles - 1; ++_i4) {
-    var _p = particles[_i4];
-    for (var j = _i4 + 1; j < nParticles; ++j) {
+  for (var _i2 = 0; _i2 < nParticles - 1; ++_i2) {
+    var _p = particles[_i2];
+    for (var j = _i2 + 1; j < nParticles; ++j) {
       var pj = particles[j];
-      if (_i4 === j || Math.abs(pj.x - _p.x) > _p.rad * minDistFactor || Math.abs(pj.y - _p.y) > _p.rad * minDistFactor) {
+      if (_i2 === j || Math.abs(pj.x - _p.x) > _p.rad * minDistFactor || Math.abs(pj.y - _p.y) > _p.rad * minDistFactor) {
         continue;
       }
 
@@ -121,8 +139,8 @@ function doPhysics(t) {
     }
   }
 
-  for (var _i5 = 0; _i5 < nParticles; ++_i5) {
-    var _p2 = particles[_i5];
+  for (var _i3 = 0; _i3 < nParticles; ++_i3) {
+    var _p2 = particles[_i3];
     // keep within edges
     var _dx = void 0;
     var _dy = void 0;
