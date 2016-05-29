@@ -125,7 +125,7 @@
     "new-parens": 1,
     "newline-after-var": 0,
     "no-array-constructor": 1,
-    "no-continue": 1,
+    "no-continue": 0,
     "no-inline-comments": 0,
     "no-lonely-if": 1,
     "no-mixed-spaces-and-tabs": 1,
@@ -139,7 +139,6 @@
     "no-unneeded-ternary": 1,
     "object-curly-spacing": 0, // see Babel section
     "one-var": [1, "never"],
-    "operator-assignment": [1, "never"],
     "padded-blocks": [0, "never"],
     "quote-props": [0, "as-needed"],
     "quotes": [1, "single"],
