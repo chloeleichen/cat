@@ -61,7 +61,7 @@ function start() {
 function update() {
   d3.timer(function (t) {
     doPhysics(t);
-    svg.selectAll('circle').data(particles).attr('cx', function (d) {
+    svg.selectAll('circle').data(particles).transition().attr('cx', function (d) {
       return d.x;
     }).attr('cy', function (d) {
       return d.y;
@@ -75,7 +75,6 @@ function doPhysics(t) {
   var frameCount = t;
   if (frameCount % catSpeed === 0) {
     reference = cats[frameCount / catSpeed % nFrames];
-    console.log(frameCount / catSpeed % nFrames);
   }
   for (var _i2 = 0; _i2 < nParticles; ++_i2) {
     var px = parseInt(particles[_i2].x / imageScale, 10);

@@ -69,6 +69,7 @@ function update() {
     doPhysics(t);
     svg.selectAll('circle')
     .data(particles)
+    .transition()
     .attr('cx', d => d.x)
     .attr('cy', d => d.y)
     .style('fill', d=>d3.hsl(d3.scale.linear().domain([minRadius, maxRadius]).range([0, 360])(d.rad), 0.8, d3.scale.linear().domain([minRadius, maxRadius]).range([0, 1])(d.rad)))
@@ -79,7 +80,6 @@ function doPhysics(t) {
   let frameCount = t;
   if (frameCount % catSpeed === 0) {
     reference = cats[frameCount / catSpeed % nFrames];
-    console.log(frameCount / catSpeed % nFrames);
   }
   for (let i = 0; i < nParticles; ++i) {
     let px = parseInt(particles[i].x / imageScale, 10);
