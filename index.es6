@@ -2,7 +2,7 @@ const damping = 0.7;
 const kSpeed = 3.0;
 const minDistFactor = 2.5;
 const nParticles = 2000;
-const catSpeed = 3;
+const catSpeed = 2;
 const nFrames = 6;
 
 const imageWidth = 200;

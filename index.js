@@ -4,7 +4,7 @@ var damping = 0.7;
 var kSpeed = 3.0;
 var minDistFactor = 2.5;
 var nParticles = 2000;
-var catSpeed = 3;
+var catSpeed = 2;
 var nFrames = 6;
 
 var imageWidth = 200;
